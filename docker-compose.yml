@@ -1,0 +1,58 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env.example
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      UPLOAD_DIR: /data/uploads
+      RESULTS_DIR: /data/results
+    volumes:
+      - ./volumes/uploads:/data/uploads
+      - ./volumes/results:/data/results
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./worker
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      UPLOAD_DIR: /data/uploads
+      RESULTS_DIR: /data/results
+      QUEUE_NAME: autodoc:queue
+      DEAD_LETTER_QUEUE_NAME: autodoc:dlq
+      WORKER_METRICS_PORT: 9100
+    volumes:
+      - ./volumes/uploads:/data/uploads
+      - ./volumes/results:/data/results
+    ports:
+      - "9100:9100"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
