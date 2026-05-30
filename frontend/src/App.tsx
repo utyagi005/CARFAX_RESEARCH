@@ -32,10 +32,10 @@ export default function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-100 text-ink">
+    <div className="flex min-h-screen flex-col bg-slate-100 text-ink md:flex-row">
       <Navbar page={page} onNavigate={setPage} />
       <main className="min-w-0 flex-1">
-        <header className="flex h-16 items-center justify-between border-b border-line bg-white px-8">
+        <header className="flex min-h-16 items-center justify-between gap-4 border-b border-line bg-white px-4 py-3 md:h-16 md:px-8 md:py-0">
           <div>
             <div className="text-sm font-semibold text-ink">Vehicle document intelligence</div>
             <div className="text-xs text-muted">FastAPI + Redis + Worker + React</div>
@@ -44,7 +44,7 @@ export default function App() {
             API: {health}
           </div>
         </header>
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           {page === "landing" && <Landing onStart={() => setPage("upload")} />}
           {page === "upload" && <Upload onUploaded={(job) => { setJobs((existing) => [job, ...existing]); setPage("jobs"); }} />}
           {page === "jobs" && <JobsDashboard jobs={jobs} onRefresh={refreshJobs} onReview={reviewJob} />}
@@ -56,4 +56,3 @@ export default function App() {
     </div>
   );
 }
-

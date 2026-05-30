@@ -3,10 +3,10 @@ import { ArrowRight, Boxes, ShieldCheck, Workflow } from "lucide-react";
 export function Landing({ onStart }: { onStart: () => void }) {
   return (
     <section className="space-y-8">
-      <div className="rounded-lg border border-line bg-white p-8 shadow-soft">
+      <div className="rounded-lg border border-line bg-white p-6 shadow-soft md:p-8">
         <div className="max-w-3xl">
-          <h1 className="text-4xl font-bold leading-tight text-ink">AutoDoc AI Pipeline</h1>
-          <p className="mt-4 text-lg leading-8 text-slate-600">
+          <h1 className="text-3xl font-bold leading-tight text-ink md:text-4xl">AutoDoc AI Pipeline</h1>
+          <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg md:leading-8">
             A vehicle document intelligence system designed as an LLM platform engineering simulation:
             upload, queue, extract, validate, observe, and deploy.
           </p>
@@ -37,4 +37,3 @@ export function Landing({ onStart }: { onStart: () => void }) {
     </section>
   );
 }
-

@@ -59,6 +59,12 @@ Upload vehicle document
 - [docs/AWS_DEPLOYMENT_PLAN.md](docs/AWS_DEPLOYMENT_PLAN.md): cloud deployment direction.
 - [docs/INTERVIEW_NOTES.md](docs/INTERVIEW_NOTES.md): recruiter/interview talking points.
 
+## Demo Screenshots
+
+![AutoDoc desktop overview](assets/autodoc-desktop-overview.png)
+
+![AutoDoc mobile overview](assets/autodoc-mobile-overview.png)
+
 ## CI/CD
 
 GitHub Actions runs Python lint/tests, frontend build, Docker image build checks, and a Trivy filesystem scan.
