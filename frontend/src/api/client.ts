@@ -64,3 +64,27 @@ export async function runPromptLab(payload: { filename: string; text: string }):
   }
   return response.json();
 }
+
+export interface ObservabilitySummary {
+  documents_processed: number;
+  successful_extractions: number;
+  failed_extractions: number;
+  retry_count: number;
+  queue_depth: number;
+  worker_throughput: number;
+  average_latency_ms: number;
+  p95_latency_ms: number;
+  validation_failure_count: number;
+  anomaly_count: number;
+  backend_health: string;
+  worker_health: string;
+  timeline: { label: string; value: number }[];
+}
+
+export async function getObservabilitySummary(): Promise<ObservabilitySummary> {
+  const response = await fetch(`${API_BASE_URL}/observability/summary`);
+  if (!response.ok) {
+    throw new Error(`Could not load observability summary: ${response.status}`);
+  }
+  return response.json();
+}

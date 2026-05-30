@@ -16,6 +16,7 @@ DEAD_LETTER_QUEUE_NAME = os.getenv("DEAD_LETTER_QUEUE_NAME", "autodoc:dlq")
 RESULTS_DIR = Path(os.getenv("RESULTS_DIR", "./volumes/results"))
 MAX_ATTEMPTS = int(os.getenv("MAX_ATTEMPTS", "3"))
 METRICS_PORT = int(os.getenv("WORKER_METRICS_PORT", "9100"))
+METRICS_SUMMARY_KEY = os.getenv("METRICS_SUMMARY_KEY", "autodoc:metrics:summary")
 
 DOCUMENTS_PROCESSED = Counter(
     "autodoc_documents_processed_total",
@@ -61,6 +62,30 @@ def save_job(client: redis.Redis, job: dict) -> None:
     client.set(job_key(job["job_id"]), json.dumps(job))
 
 
+def publish_summary(client: redis.Redis, *, latency_ms: int | None = None) -> None:
+    existing = client.get(METRICS_SUMMARY_KEY)
+    summary = json.loads(existing) if existing else {
+        "worker_throughput": 0,
+        "average_latency_ms": 0,
+        "p95_latency_ms": 0,
+        "timeline": [],
+    }
+    if latency_ms is not None:
+        throughput = int(summary.get("worker_throughput", 0)) + 1
+        previous_average = int(summary.get("average_latency_ms", 0))
+        summary["worker_throughput"] = throughput
+        summary["average_latency_ms"] = int(((previous_average * (throughput - 1)) + latency_ms) / throughput)
+        summary["p95_latency_ms"] = max(int(summary.get("p95_latency_ms", 0)), latency_ms)
+    summary["worker_health"] = "ok"
+    summary["queue_depth"] = client.llen(QUEUE_NAME)
+    summary["timeline"] = [
+        {"label": "queued", "value": client.llen(QUEUE_NAME)},
+        {"label": "processed", "value": int(summary.get("worker_throughput", 0))},
+        {"label": "retries", "value": int(client.llen(DEAD_LETTER_QUEUE_NAME))},
+    ]
+    client.set(METRICS_SUMMARY_KEY, json.dumps(summary))
+
+
 def process_message(client: redis.Redis, payload: str) -> None:
     message = json.loads(payload)
     job = load_job(client, message["job_id"])
@@ -93,6 +118,7 @@ def process_message(client: redis.Redis, payload: str) -> None:
         DOCUMENTS_PROCESSED.inc()
         EXTRACTIONS_SUCCESS.inc()
         EXTRACTION_LATENCY.observe(latency_ms / 1000)
+        publish_summary(client, latency_ms=latency_ms)
         logger.info("job_completed", job_id=job["job_id"], latency_ms=latency_ms)
     except Exception as exc:
         if attempts < MAX_ATTEMPTS:
@@ -106,6 +132,7 @@ def process_message(client: redis.Redis, payload: str) -> None:
         save_job(client, job)
         client.rpush(DEAD_LETTER_QUEUE_NAME, payload)
         EXTRACTIONS_FAILED.inc()
+        publish_summary(client)
         logger.error("job_dead_lettered", job_id=job["job_id"], error=str(exc), attempts=attempts)
 
 
@@ -116,6 +143,7 @@ def main() -> None:
     logger.info("worker_started", queue=QUEUE_NAME, redis_url=REDIS_URL, metrics_port=METRICS_PORT)
     while True:
         QUEUE_DEPTH.set(client.llen(QUEUE_NAME))
+        publish_summary(client)
         item = client.blpop(QUEUE_NAME, timeout=5)
         if not item:
             continue

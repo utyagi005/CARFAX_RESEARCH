@@ -1,0 +1,35 @@
+{
+  "title": "AutoDoc AI Pipeline",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Documents Processed",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{ "expr": "autodoc_documents_processed_total", "legendFormat": "processed" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Extraction Outcomes",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        { "expr": "autodoc_extractions_success_total", "legendFormat": "success" },
+        { "expr": "autodoc_extractions_failed_total", "legendFormat": "failed" }
+      ]
+    },
+    {
+      "type": "gauge",
+      "title": "Queue Depth",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 8 },
+      "targets": [{ "expr": "autodoc_queue_depth", "legendFormat": "backend queue" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Extraction Latency",
+      "gridPos": { "h": 8, "w": 16, "x": 8, "y": 8 },
+      "targets": [{ "expr": "histogram_quantile(0.95, rate(autodoc_extraction_latency_seconds_bucket[5m]))", "legendFormat": "p95" }]
+    }
+  ]
+}
