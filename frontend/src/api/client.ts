@@ -53,3 +53,14 @@ export async function getHealth(): Promise<{ service: string; status: string }> 
   return response.json();
 }
 
+export async function runPromptLab(payload: { filename: string; text: string }): Promise<Record<string, unknown>> {
+  const response = await fetch(`${API_BASE_URL}/prompt-lab/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error(`Prompt lab failed: ${response.status}`);
+  }
+  return response.json();
+}

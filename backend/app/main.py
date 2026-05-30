@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
-from app.api import documents, health, jobs
+from app.api import documents, health, jobs, prompt_lab
 from app.config import get_settings
 from app.services.metrics_service import QUEUE_DEPTH, REQUEST_COUNT, REQUEST_LATENCY
 from app.services.redis_client import create_redis
@@ -58,4 +58,5 @@ async def metrics():
 app.include_router(health.router)
 app.include_router(documents.router)
 app.include_router(jobs.router)
+app.include_router(prompt_lab.router)
 

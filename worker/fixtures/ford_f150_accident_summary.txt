@@ -1,0 +1,6 @@
+Accident summary
+VIN 1FTEW1EP7JFA12345
+Odometer 980000 km
+Service date 2026-02-01
+Front bumper damage reported. Odometer reading should be reviewed for plausibility.
+
