@@ -13,9 +13,13 @@ from app.services.redis_client import create_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.redis = await create_redis()
+    settings = get_settings()
+    app.state.demo_jobs = {}
+    app.state.demo_results = {}
+    app.state.redis = None if settings.autodoc_demo_mode else await create_redis()
     yield
-    await app.state.redis.aclose()
+    if app.state.redis is not None:
+        await app.state.redis.aclose()
 
 
 app = FastAPI(
@@ -60,4 +64,3 @@ app.include_router(documents.router)
 app.include_router(jobs.router)
 app.include_router(prompt_lab.router)
 app.include_router(observability.router)
-

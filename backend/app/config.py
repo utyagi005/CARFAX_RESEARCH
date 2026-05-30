@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     metrics_summary_key: str = "autodoc:metrics:summary"
     max_attempts: int = 3
     log_level: str = "INFO"
+    autodoc_demo_mode: bool = False
     backend_cors_origins: str = Field(
         default="http://localhost:5173,http://localhost:3000"
     )
@@ -32,4 +33,3 @@ def get_settings() -> Settings:
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
     settings.results_dir.mkdir(parents=True, exist_ok=True)
     return settings
-

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Request
 
 from app.config import get_settings
 from app.models.job import JobStatus
+from app.services.demo_job_service import list_demo_jobs
 from app.services.job_service import list_jobs
 
 router = APIRouter(prefix="/observability", tags=["observability"])
@@ -12,6 +13,31 @@ router = APIRouter(prefix="/observability", tags=["observability"])
 @router.get("/summary")
 async def observability_summary(request: Request):
     settings = get_settings()
+    if settings.autodoc_demo_mode:
+        jobs = list_demo_jobs(request.app.state.demo_jobs)
+        completed = [job for job in jobs if job.status == JobStatus.COMPLETED]
+        failed = [job for job in jobs if job.status in {JobStatus.FAILED, JobStatus.DEAD_LETTER}]
+        latencies = [job.latency_ms for job in completed if job.latency_ms is not None]
+        return {
+            "documents_processed": len(jobs),
+            "successful_extractions": len(completed),
+            "failed_extractions": len(failed),
+            "retry_count": 0,
+            "queue_depth": 0,
+            "worker_throughput": len(completed),
+            "average_latency_ms": int(sum(latencies) / len(latencies)) if latencies else 0,
+            "p95_latency_ms": max(latencies) if latencies else 0,
+            "validation_failure_count": sum(len(job.validation_errors) for job in jobs),
+            "anomaly_count": sum(len(job.anomaly_flags) for job in jobs),
+            "backend_health": "demo",
+            "worker_health": "simulated",
+            "timeline": [
+                {"label": "uploaded", "value": len(jobs)},
+                {"label": "completed", "value": len(completed)},
+                {"label": "failed", "value": len(failed)},
+            ],
+        }
+
     redis = request.app.state.redis
     jobs = await list_jobs(redis, limit=500)
     queue_depth = await redis.llen(settings.queue_name)
@@ -47,4 +73,3 @@ async def observability_summary(request: Request):
             ],
         ),
     }
-

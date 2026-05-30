@@ -27,6 +27,12 @@ Open:
 - Grafana: http://127.0.0.1:3001
 - Prometheus: http://127.0.0.1:9090
 
+## Public Vercel Demo
+
+This repo includes a Vercel Services configuration for a free public demo. Import the repository in Vercel, keep **Application Preset** set to **Services**, and deploy from the repository root. The committed demo environment uses browser-safe mock extraction so recruiters can upload a sample document, review normalized JSON, and inspect observability without Redis, Docker Compose, or paid model APIs.
+
+See [docs/VERCEL_DEMO.md](docs/VERCEL_DEMO.md) for the exact dashboard steps and demo-mode explanation.
+
 ## Current Flow
 
 ```text

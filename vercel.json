@@ -1,0 +1,28 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/"
+    },
+    "backend": {
+      "entrypoint": "backend/main.py",
+      "routePrefix": "/api",
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "AUTODOC_DEMO_MODE": "true",
+    "BACKEND_CORS_ORIGINS": "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173",
+    "RESULTS_DIR": "/tmp/autodoc/results",
+    "UPLOAD_DIR": "/tmp/autodoc/uploads",
+    "VITE_API_BASE_URL": "/api",
+    "VITE_DEMO_MODE": "true"
+  },
+  "build": {
+    "env": {
+      "VITE_API_BASE_URL": "/api",
+      "VITE_DEMO_MODE": "true"
+    }
+  }
+}

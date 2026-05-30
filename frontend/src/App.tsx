@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getHealth, listJobs, type JobRecord } from "./api/client";
+import { getHealth, IS_DEMO_MODE, listJobs, type JobRecord } from "./api/client";
 import { Navbar } from "./components/Navbar";
 import type { Page } from "./lib/navigation";
 import { ExtractionReview } from "./pages/ExtractionReview";
@@ -38,7 +38,9 @@ export default function App() {
         <header className="flex min-h-16 items-center justify-between gap-4 border-b border-line bg-white px-4 py-3 md:h-16 md:px-8 md:py-0">
           <div>
             <div className="text-sm font-semibold text-ink">Vehicle document intelligence</div>
-            <div className="text-xs text-muted">FastAPI + Redis + Worker + React</div>
+            <div className="text-xs text-muted">
+              {IS_DEMO_MODE ? "Vercel browser demo + mock extraction" : "FastAPI + Redis + Worker + React"}
+            </div>
           </div>
           <div className="rounded bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
             API: {health}
