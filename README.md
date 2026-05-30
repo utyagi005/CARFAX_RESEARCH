@@ -12,12 +12,20 @@ The goal is to show platform thinking around AI workloads: queueing, retries, wo
 docker compose up --build
 ```
 
+To include Prometheus and Grafana:
+
+```bash
+docker compose --profile observability up --build
+```
+
 Open:
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000/health
 - Prometheus metrics: http://localhost:8000/metrics
 - Worker metrics: http://localhost:9100/metrics
+- Grafana: http://localhost:3001
+- Prometheus: http://localhost:9090
 
 ## Current Flow
 
@@ -38,6 +46,26 @@ Upload vehicle document
 - Python worker service
 - Prometheus-compatible metrics
 - Docker Compose
+- Kubernetes manifests
+- GitHub Actions and Trivy
+
+## Repository Guide
+
+- [AI_ENGINEERING_ROADMAP.md](AI_ENGINEERING_ROADMAP.md): first-person engineering case study.
+- [PROJECT_BRIEF.md](PROJECT_BRIEF.md): concise portfolio brief.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): system diagram and service responsibilities.
+- [docs/RUNBOOK.md](docs/RUNBOOK.md): operational troubleshooting guide.
+- [docs/SECURITY.md](docs/SECURITY.md): safe logging, secrets, and scanning notes.
+- [docs/AWS_DEPLOYMENT_PLAN.md](docs/AWS_DEPLOYMENT_PLAN.md): cloud deployment direction.
+- [docs/INTERVIEW_NOTES.md](docs/INTERVIEW_NOTES.md): recruiter/interview talking points.
+
+## CI/CD
+
+GitHub Actions runs Python lint/tests, frontend build, Docker image build checks, and a Trivy filesystem scan.
+
+## Kubernetes
+
+Kubernetes manifests live in `infra/k8s/` and include frontend, backend, worker, Redis, ConfigMap, Secret example, and worker HPA. The HPA uses CPU for a simple local-compatible example; the docs explain how queue-depth scaling would work with KEDA or custom metrics.
 
 ## Demo Data
 

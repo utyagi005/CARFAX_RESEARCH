@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: autodoc-ai
+  annotations:
+    autodoc.ai/autoscaling-note: "For production queue-depth autoscaling, replace CPU HPA with KEDA Redis scaler or custom Prometheus metrics."
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: autodoc-worker:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9100
+          envFrom:
+            - configMapRef:
+                name: autodoc-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 750m
+              memory: 512Mi
+
