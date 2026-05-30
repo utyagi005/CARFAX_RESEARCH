@@ -20,12 +20,12 @@ docker compose --profile observability up --build
 
 Open:
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/health
-- Prometheus metrics: http://localhost:8000/metrics
-- Worker metrics: http://localhost:9100/metrics
-- Grafana: http://localhost:3001
-- Prometheus: http://localhost:9090
+- Frontend: http://127.0.0.1:3000
+- Backend API: http://127.0.0.1:8000/health
+- Prometheus metrics: http://127.0.0.1:8000/metrics
+- Worker metrics: http://127.0.0.1:9100/metrics
+- Grafana: http://127.0.0.1:3001
+- Prometheus: http://127.0.0.1:9090
 
 ## Current Flow
 
@@ -56,6 +56,7 @@ Upload vehicle document
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): system diagram and service responsibilities.
 - [docs/RUNBOOK.md](docs/RUNBOOK.md): operational troubleshooting guide.
 - [docs/SECURITY.md](docs/SECURITY.md): safe logging, secrets, and scanning notes.
+- [docs/VERIFICATION.md](docs/VERIFICATION.md): tests, Docker Compose, and upload-to-worker proof.
 - [docs/AWS_DEPLOYMENT_PLAN.md](docs/AWS_DEPLOYMENT_PLAN.md): cloud deployment direction.
 - [docs/INTERVIEW_NOTES.md](docs/INTERVIEW_NOTES.md): recruiter/interview talking points.
 

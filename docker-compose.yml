@@ -49,8 +49,10 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://127.0.0.1:8000
     environment:
-      VITE_API_BASE_URL: http://localhost:8000
+      VITE_API_BASE_URL: http://127.0.0.1:8000
     ports:
       - "3000:3000"
     depends_on:
@@ -79,4 +81,3 @@ services:
       - "3001:3000"
     depends_on:
       - prometheus
-
